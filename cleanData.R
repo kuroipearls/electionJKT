@@ -17,7 +17,8 @@ token_secret <- "YAm6bNpfGFSjSokihzVlwGbZGAULmK1ziG4cVxg8SRVq1"
 
 #Create Connection
 setup_twitter_oauth(api_key, api_secret, token, token_secret)
-train <- read.csv('agus1desC.csv', stringsAsFactors = F)
+train <- read.csv('lab_anies1des.csv', stringsAsFactors = F)
+print(train)
 txt = train$text
 str(train)
 
@@ -104,6 +105,7 @@ dm <- data.frame(word = names(word_freqs), freq = word_freqs)
 wordcloud(dm$word, dm$freq, random.order = FALSE , colors = brewer.pal(8,"Dark2"))
 #ENDS HERE
 
+train$text <- clean
 lalala <- train [!duplicated(train$text),]
 print(lalala)
-write.csv(lalala,"cobaclean.csv")
+write.csv(lalala,"tryclean_anies.csv")
