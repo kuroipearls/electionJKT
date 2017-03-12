@@ -3,9 +3,11 @@ require(dplyr)
 require(stringr)
 require(data.table)
 require(tm)
+require(Matrix)
+require(e1071)
 
 #read data
-train <- read.csv('checkanies.csv', stringsAsFactors = F) 
+train <- read.csv('lab_anies1des.csv', stringsAsFactors = F) 
 
 #change is_3 value = 1
 train$is_3 <- 1    
@@ -13,6 +15,8 @@ train$is_3 <- 1
 train$tanggal <- as.Date(c("2016-12-01"))
 #change NA sentimen_3 value with sentimen value
 train$sentimen_3[is.na(train$sentimen_3)] <- as.integer(train$sentimen[is.na(train$sentimen_3)])
+#change is_sentimen value with conditional statement
+train$is_sentimen <- ifelse(train$sentimen==0, -1, 1)
 
 train$text = gsub("&amp", "", train$text)
 # remove retweet & via 
@@ -57,4 +61,9 @@ DTM <- DocumentTermMatrix(MyCorpus,
 dim(DTM)
 inspect(DTM)
 
-write.csv(train,"checkanies2.csv")
+#change DTM to a matrix, then to a data frame
+adtm.m<-as.matrix(DTM)
+adtm.df<-as.data.frame(adtm.m)
+write.csv(adtm.df,"tdm.csv")
+
+write.csv(train,"checkanies3.csv")
