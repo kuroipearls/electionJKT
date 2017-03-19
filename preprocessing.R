@@ -55,9 +55,17 @@ content(MyCorpus[[1]])
 MyCorpus <- tm_map(MyCorpus, content_transformer(tolower))
 content(MyCorpus[[1]])
 
+#remove stopwords 
+MyCorpus <- tm_map(MyCorpus, removeWords, c("yang", "di", "ke", "dan", "yg", "ini",
+                                            "itu", "saja", "dengan", "untuk", "dari",
+                                            "juga", "lalu", "dalam", "akan", "pada",
+                                            "karena", "tersebut", "bisa", "ada", 
+                                            "krn", "tsb", "dgn", "dg", "utk", "jga",
+                                            "dlm", "pd"))
+
 # Create the Document-Term matrix
-DTM <- DocumentTermMatrix(MyCorpus, 
-                          control = list(bounds = list(global = c(0, Inf)))) 
+DTM <- DocumentTermMatrix(MyCorpus)
+#DTM <- DocumentTermMatrix(MyCorpus, control = list(bounds = list(global = c(0, Inf)))) 
 dim(DTM)
 inspect(DTM)
 
@@ -66,4 +74,10 @@ adtm.m<-as.matrix(DTM)
 adtm.df<-as.data.frame(adtm.m)
 write.csv(adtm.df,"tdm.csv")
 
-write.csv(train,"checkanies3.csv")
+#for stemming
+haha <- strsplit(train$text, " ")
+for(i in 1:154) {
+  hasil <- sapply(haha[[i]], katadasaR)
+  train$text[[i]] <- paste(hasil, collapse=' ')
+}
+write.csv(train,"checkanies4.csv")
