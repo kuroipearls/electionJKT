@@ -5,9 +5,16 @@ require(data.table)
 require(tm)
 require(Matrix)
 require(e1071)
+require(katadasaR)
 
 #read data
-train <- read.csv('lab_anies1des.csv', stringsAsFactors = F) 
+train <- read.csv('trainingsetFIX.csv', stringsAsFactors = F)
+new_train <- read.csv('train_set/lab_anies14des.csv', stringsAsFactors = F)
+train <- rbind(train, new_train)
+
+#change class to numeric
+train$is_kelas = as.numeric(as.character(train$is_kelas))
+write.csv(train,"trainingsetFIX.csv")
 
 #change is_3 value = 1
 train$is_3 <- 1    
@@ -63,6 +70,11 @@ MyCorpus <- tm_map(MyCorpus, removeWords, c("yang", "di", "ke", "dan", "yg", "in
                                             "krn", "tsb", "dgn", "dg", "utk", "jga",
                                             "dlm", "pd"))
 
+aha<-data.frame(text=unlist(sapply(MyCorpus, `[`, "content")), 
+                      stringsAsFactors=F)  #for testing set, re-arrange words
+aha$is_kelas <- train$sentimen
+write.csv(aha,"testingsetFIX.csv")
+  
 # Create the Document-Term matrix
 DTM <- DocumentTermMatrix(MyCorpus)
 #DTM <- DocumentTermMatrix(MyCorpus, control = list(bounds = list(global = c(0, Inf)))) 
@@ -72,11 +84,12 @@ inspect(DTM)
 #change DTM to a matrix, then to a data frame
 adtm.m<-as.matrix(DTM)
 adtm.df<-as.data.frame(adtm.m)
-write.csv(adtm.df,"tdm.csv")
+adtm.df$is_kelas = train$sentimen
+write.csv(adtm.df,"trainingsetFIX.csv")
 
 #for stemming
 haha <- strsplit(train$text, " ")
-for(i in 1:154) {
+for(i in 1:2868) {
   hasil <- sapply(haha[[i]], katadasaR)
   train$text[[i]] <- paste(hasil, collapse=' ')
 }
